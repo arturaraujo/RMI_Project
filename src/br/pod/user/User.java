@@ -36,28 +36,74 @@ public class User extends UnicastRemoteObject implements UserIF {
 	}
 	
 	public static void main(String[] args) {
-		User user = null;
-		String string;
+		User user;
+		String string, errorMessage = "";
 		while (true){
-			string = JOptionPane.showInputDialog("Informe seu nome: ");
+			string = JOptionPane.showInputDialog(errorMessage + "Informe seu nome: ");
+			errorMessage = "";
 			try {
-				if(string.equals("0"))
-					break;
+				if(string == null){
+					System.exit(0);
+				}
 				user = new User(string);
 				break;
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-		}
-		while (!string.equals("0")){
-			//TODO Menu para o usuário. Por enquanto só está mandando pra todo mundo.
-			string = JOptionPane.showInputDialog("Mensagem: ");
-			try {
-				user.server.sendAll(user.getName(), string);
+			} catch (UserException e) {
+				errorMessage = "(" + e.getMessage() + ")\n\n";
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
+		boolean exit = false;
+		while (!exit){
+			string = JOptionPane.showInputDialog(menu(errorMessage));
+			errorMessage = "";
+			switch(string.trim()){
+				case "1":
+					user.sendAll();
+					break;
+				case "2":
+					break;
+				case "3":
+					break;
+				case "4":
+					break;
+				case "5":
+					exit = true;
+					break;
+				default:
+					errorMessage = "(O comando informado é inválido)\n\n";
+					break;
+			}
+		}
+		try {
+			user.server.unRegister(user);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		System.exit(0);
+	}
+	
+	private static String menu(String errorMessage){
+		StringBuilder menu = new StringBuilder(errorMessage + "Escolha uma das opções abaixo:\n");
+		menu.append("1 - Enviar no grupo\n");
+		menu.append("2 - Enviar direct\n");
+		menu.append("3 - Listar usuários\n");
+		menu.append("4 - Mudar nome de usuario\n");
+		menu.append("5 - Sair do chat\n");
+		return menu.toString();
+	}
+	
+	private void sendAll(){
+		String string;
+		while(true){
+			string = JOptionPane.showInputDialog("Mensagem:");
+			if(string == null)
+				break;
+			try {
+				this.server.sendAll(this.name, string);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
