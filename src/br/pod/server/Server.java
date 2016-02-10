@@ -5,7 +5,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import br.pod.user.UserIF;
 
@@ -62,6 +64,13 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 		} else {
 			throw new UserException("O nome de usuário informado já existe");
 		}
+	}
+	
+	@Override
+	public List<String> list(UserIF user) throws RemoteException {
+		List<String> list = new ArrayList<String>(users.keySet());
+		list.remove(user.getName());
+		return list;
 	}
 	
 	public static void main(String[] args) {

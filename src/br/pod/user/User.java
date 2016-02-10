@@ -5,6 +5,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -67,6 +68,7 @@ public class User extends UnicastRemoteObject implements UserIF {
 					user.sendTo();
 					break;
 				case "3":
+					user.list();
 					break;
 				case "4":
 					user.rename();
@@ -160,6 +162,19 @@ public class User extends UnicastRemoteObject implements UserIF {
 			} catch (UserException e) {
 				errorMessage = "(" + e.getMessage() + ")\n\n";
 			}
+		}
+	}
+	
+	private void list(){
+		try {
+			List<String> list = this.server.list(this);
+			StringBuilder string = new StringBuilder("Usuários logados:\n");
+			for(String s : list){
+				string.append("- " + s + "\n");
+			}
+			JOptionPane.showMessageDialog(null, string);
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 }
