@@ -22,6 +22,7 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 	public void register(UserIF user) throws RemoteException, UserException{
 		if (!users.containsKey(user.getName())){
 			users.put(user.getName(), user);
+			sendAll(user.getName(), "entrou no grupo.");
 		} else {
 			throw new UserException("O nome de usuário informado já existe. Informe outro.");
 		}
