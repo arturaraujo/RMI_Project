@@ -69,6 +69,7 @@ public class User extends UnicastRemoteObject implements UserIF {
 				case "3":
 					break;
 				case "4":
+					user.rename();
 					break;
 				case "5":
 					exit = true;
@@ -131,7 +132,7 @@ public class User extends UnicastRemoteObject implements UserIF {
 		}
 		String message;
 		while(!exit){
-			message = JOptionPane.showInputDialog("Direct para '" + destinatary + "':");
+			message = JOptionPane.showInputDialog(errorMessage + "Direct para '" + destinatary + "':");
 			if(message == null)
 				break;
 			try {
@@ -139,7 +140,25 @@ public class User extends UnicastRemoteObject implements UserIF {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			} catch (UserException e) {
+				errorMessage = "(" + e.getMessage() + ")\n\n";
+			}
+		}
+	}
+	
+	private void rename(){
+		String newName = "", errorMessage = "";
+		while(true){
+			newName = JOptionPane.showInputDialog(errorMessage + "Informe o seu novo nome de usuario:");
+			if(newName == null)
+				break;
+			try {
+				this.server.rename(this, newName);
+				this.name = newName;
+				break;
+			} catch (RemoteException e) {
 				e.printStackTrace();
+			} catch (UserException e) {
+				errorMessage = "(" + e.getMessage() + ")\n\n";
 			}
 		}
 	}

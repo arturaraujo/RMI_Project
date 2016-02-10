@@ -52,6 +52,17 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 			throw new UserException("O usuário informado não existe.");
 		}
 	}
+
+	@Override
+	public void rename(UserIF user, String newName) throws RemoteException, UserException {
+		if(!users.containsKey(newName)){
+			users.put(newName, user);
+			users.remove(user.getName());
+			sendAll(user.getName(), "mudou o seu nome de usuário. Novo nome: '" + newName + "'.");
+		} else {
+			throw new UserException("O nome de usuário informado já existe");
+		}
+	}
 	
 	public static void main(String[] args) {
 		try {
@@ -62,5 +73,4 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 			e.printStackTrace();
 		}
 	}
-
 }

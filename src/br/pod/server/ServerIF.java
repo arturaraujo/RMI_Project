@@ -10,4 +10,5 @@ public interface ServerIF extends Remote{
 	public void unRegister(UserIF user) throws RemoteException;
 	public void sendAll(String sender, String message) throws RemoteException;
 	public void sendTo(String sender, String user, String message) throws RemoteException, UserException;
+	public void rename(UserIF user, String newName) throws RemoteException, UserException;
 }
