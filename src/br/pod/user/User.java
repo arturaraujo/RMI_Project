@@ -56,12 +56,15 @@ public class User extends UnicastRemoteObject implements UserIF {
 		boolean exit = false;
 		while (!exit){
 			string = JOptionPane.showInputDialog(menu(errorMessage));
+			if(string == null)
+				break;
 			errorMessage = "";
 			switch(string.trim()){
 				case "1":
 					user.sendAll();
 					break;
 				case "2":
+					user.sendTo();
 					break;
 				case "3":
 					break;
@@ -102,6 +105,40 @@ public class User extends UnicastRemoteObject implements UserIF {
 			try {
 				this.server.sendAll(this.name, string);
 			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void sendTo(){
+		String destinatary = "", errorMessage = "";
+		boolean exit = false;
+		while(!exit){
+			destinatary = JOptionPane.showInputDialog(errorMessage + "Informe o nome do usuario:");
+			if(destinatary == null){
+				exit = true;
+				break;
+			}
+			try {
+				this.server.sendTo(this.getName(), destinatary.trim(), null);
+				exit = false;
+				break;
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (UserException e) {
+				errorMessage = "(" + e.getMessage() + ")\n\n";
+			}
+		}
+		String message;
+		while(!exit){
+			message = JOptionPane.showInputDialog("Direct para '" + destinatary + "':");
+			if(message == null)
+				break;
+			try {
+				this.server.sendTo(this.name, destinatary, message);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			} catch (UserException e) {
 				e.printStackTrace();
 			}
 		}

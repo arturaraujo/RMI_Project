@@ -43,9 +43,11 @@ public class Server extends UnicastRemoteObject implements ServerIF{
 
 	@Override
 	public void sendTo(String sender, String user, String message) throws RemoteException, UserException {
-		String text = sender + " (direct): " + message;
 		if(users.containsKey(user)){
-			users.get(user).receive(text);
+			if (message != null){
+				String text = sender + " (direct): " + message;
+				users.get(user).receive(text);
+			}
 		} else {
 			throw new UserException("O usuário informado não existe.");
 		}
